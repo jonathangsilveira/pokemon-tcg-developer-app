@@ -2,10 +2,15 @@ package br.edu.jonathangs.pokmontcgdeveloper.ui.sets
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
+import br.edu.jonathangs.pokmontcgdeveloper.database.Set
 import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
+import br.edu.jonathangs.pokmontcgdeveloper.network.NetworkException
 import kotlinx.android.synthetic.main.fragment_sets.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -18,16 +23,27 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         subscribe()
     }
 
+    private fun setupRecyclerView() {
+        set_list.layoutManager = LinearLayoutManager(
+            requireActivity(),
+            RecyclerView.VERTICAL,
+            false
+        )
+    }
+
     private fun subscribe() {
-        viewModel.sets.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is ListState.InProgress -> showLoading()
-                is ListState.Success<*, *> -> hideLoading()
-                else -> hideLoading()
-            }
+        viewModel.sets.observe(viewLifecycleOwner) { render(state = it) }
+    }
+
+    private fun render(state: ListState<Set>) {
+        when (state) {
+            is ListState.InProgress -> showLoading()
+            is ListState.Success -> onSuccess(state)
+            is ListState.Failure -> onFailure(state)
         }
     }
 
@@ -37,6 +53,23 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
 
     private fun hideLoading() {
         loading_view.visibility = View.GONE
+    }
+
+    private fun onSuccess(state: ListState.Success<Set>) {
+        state.data?.let {
+            set_list.adapter = SetsAdapter(items = it)
+        }
+        hideLoading()
+        if (state.networkFailure is NetworkException)
+            showNetworkFailure(state.networkFailure)
+    }
+
+    private fun onFailure(state: ListState.Failure<Set>) {
+        hideLoading()
+    }
+
+    private fun showNetworkFailure(cause: NetworkException) {
+        Toast.makeText(requireActivity(), cause.message, Toast.LENGTH_SHORT).show()
     }
 
 }

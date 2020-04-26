@@ -15,17 +15,22 @@ class Endpoint(private val service: WebService) {
             if (response.isSuccessful)
                 RequestStatus.Success(response.body())
             else
-                RequestStatus.Failure.Response(errorResponse(response))
+                RequestStatus.Failure(errorResponse(response))
         } catch (cause: Exception) {
-            RequestStatus.Failure.Undefined(cause)
+            RequestStatus.Failure(NetworkException("Unexpected", cause))
         }
     }
 
-    private fun <T> errorResponse(response: Response<T>): Error? {
+    private fun <T> errorResponse(response: Response<T>): NetworkException {
         return if (response.errorBody() == null)
-            null
-        else
-            Gson().fromJson(response.errorBody()?.string(), Error::class.java)
+            ErrorException("No error body")
+        else {
+            val json = toJson(response)
+            ErrorException(json.error)
+        }
     }
+
+    private fun <T> toJson(response: Response<T>) =
+        Gson().fromJson(response.errorBody()?.string(), Error::class.java)
 
 }

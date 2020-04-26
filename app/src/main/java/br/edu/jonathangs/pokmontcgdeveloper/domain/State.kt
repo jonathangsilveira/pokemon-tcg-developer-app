@@ -1,7 +1,5 @@
 package br.edu.jonathangs.pokmontcgdeveloper.domain
 
-import br.edu.jonathangs.pokmontcgdeveloper.network.RequestStatus
-
 sealed class LoadingState<T>(
     val data: T? = null,
     val message: String? = null
@@ -45,9 +43,9 @@ sealed class ListState<out T>: LoadState<List<T>>() {
 
     class InProgress<out T>: ListState<T>()
 
-    data class Success<out T, out F>(
+    data class Success<out T>(
         val data: List<T>?,
-        val apiFailure: RequestStatus.Failure<F>?
+        val networkFailure: Throwable?
     ): ListState<T>()
 
     data class Failure<out T>(val cause: Throwable): ListState<T>()
@@ -57,18 +55,12 @@ sealed class ListState<out T>: LoadState<List<T>>() {
         fun <T> inProgress() =
             InProgress<T>()
 
-        fun <T, F> success(
+        fun <T> success(
             data: List<T>? = null,
-            apiFailure: RequestStatus.Failure<F>? = null
-        ) = Success(
-            data,
-            apiFailure
-        )
+            networkFailure: Throwable? = null
+        ) = Success(data, networkFailure)
 
-        fun <T> failure(cause: Throwable) =
-            Failure<T>(
-                cause
-            )
+        fun <T> failure(cause: Throwable) = Failure<T>(cause)
 
     }
 

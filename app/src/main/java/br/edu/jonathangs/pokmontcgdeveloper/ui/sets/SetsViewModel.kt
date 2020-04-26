@@ -2,15 +2,17 @@ package br.edu.jonathangs.pokmontcgdeveloper.ui.sets
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import br.edu.jonathangs.pokmontcgdeveloper.network.Endpoint
-import br.edu.jonathangs.pokmontcgdeveloper.network.WebService
+import androidx.lifecycle.viewModelScope
 import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
+import kotlinx.coroutines.Dispatchers
 
 class SetsViewModel(
     application: Application,
-    private val repo: Repository
+    repo: Repository
 ): AndroidViewModel(application) {
 
-    val sets = repo.allSets()
+    private val ioContext = viewModelScope.coroutineContext + Dispatchers.IO
+
+    val sets = repo.allSets(ioContext)
 
 }
