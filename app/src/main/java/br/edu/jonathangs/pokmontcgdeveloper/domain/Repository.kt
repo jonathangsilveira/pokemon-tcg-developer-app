@@ -14,23 +14,24 @@ import io.realm.Realm.getDefaultInstance
 import io.realm.kotlin.where
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 class Repository(
     private val endpoint: Endpoint,
     private val database: Realm = getDefaultInstance()
 ) {
 
-    fun allSets(): LiveData<ListState<Set>> = liveData(Dispatchers.IO) {
-        emit(inProgress<Set>())
-        val apiFailure = when (val result = endpoint.allSets()) {
+    fun allSets(context: CoroutineContext): LiveData<ListState<Set>> = liveData(context) {
+        emit(inProgress())
+        val networkFailure = when (val result = endpoint.allSets()) {
             is RequestStatus.Success -> {
                 save(result.data)
                 null
             }
-            is RequestStatus.Failure -> result
+            is RequestStatus.Failure -> result.cause
         }
         val sets = querySets()
-        emit(success<Set, Sets>(data = sets, apiFailure = apiFailure))
+        emit(success(data = sets, networkFailure = networkFailure))
     }
 
     private suspend fun querySets() = withContext(Dispatchers.Main) {

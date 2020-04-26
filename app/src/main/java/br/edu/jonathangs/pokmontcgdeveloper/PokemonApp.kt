@@ -9,12 +9,9 @@ import com.google.gson.GsonBuilder
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import okhttp3.OkHttpClient
-import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
-import org.koin.core.qualifier.Qualifier
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -48,6 +45,7 @@ class PokemonApp : Application() {
     }
 
     private fun appModule() = module {
+        single { Repository(get()) }
         viewModel {
             SetsViewModel(
                 application = this@PokemonApp,
@@ -68,10 +66,8 @@ class PokemonApp : Application() {
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-        single { retrofit }
         val webservice = retrofit.create<WebService>()
-        val endpoint = Endpoint(webservice)
-        single { Repository(endpoint) }
+        single { Endpoint(webservice) }
     }
 
 }
