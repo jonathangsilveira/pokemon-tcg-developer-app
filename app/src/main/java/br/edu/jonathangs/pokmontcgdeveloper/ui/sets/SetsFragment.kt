@@ -57,7 +57,7 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
 
     private fun onSuccess(state: ListState.Success<Set>) {
         state.data?.let {
-            set_list.adapter = SetsAdapter(items = it)
+            set_list.adapter = SetsAdapter(style = SetsAdapter.Style.CARD,  items = it)
         }
         hideLoading()
         if (state.networkFailure is NetworkException)
