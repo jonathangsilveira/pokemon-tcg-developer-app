@@ -4,6 +4,7 @@ import android.app.Application
 import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
 import br.edu.jonathangs.pokmontcgdeveloper.network.Endpoint
 import br.edu.jonathangs.pokmontcgdeveloper.network.WebService
+import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetViewModel
 import br.edu.jonathangs.pokmontcgdeveloper.ui.sets.SetsViewModel
 import com.google.gson.GsonBuilder
 import io.realm.Realm
@@ -50,6 +51,13 @@ class PokemonApp : Application() {
             SetsViewModel(
                 application = this@PokemonApp,
                 repo = get()
+            )
+        }
+        viewModel { (setCode: String) ->
+            SetViewModel(
+                application = this@PokemonApp,
+                repo = get(),
+                setCode = setCode
             )
         }
     }

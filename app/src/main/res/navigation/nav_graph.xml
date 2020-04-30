@@ -18,5 +18,26 @@
         android:id="@+id/home"
         android:name="br.edu.jonathangs.pokmontcgdeveloper.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_to_set"
+            app:destination="@id/set">
+            <argument
+                android:name="setCode"
+                app:argType="string" />
+            <argument android:name="backdropImage"
+                app:argType="string"/>
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/set"
+        android:name="br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetFragment"
+        android:label="SetFragment" >
+        <argument
+            android:name="setCode"
+            app:argType="string" />
+        <argument
+            android:name="backdropImage"
+            app:argType="string" />
+    </fragment>
 </navigation>
