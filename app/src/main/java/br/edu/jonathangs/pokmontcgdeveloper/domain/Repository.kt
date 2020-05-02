@@ -24,6 +24,8 @@ class Repository(
     private val database: Realm = getDefaultInstance()
 ) {
 
+    private val cachedCards = mutableListOf<Card>()
+
     fun allSets(context: CoroutineContext): LiveData<ListState<Set>> = liveData(context) {
         emit(inProgress())
         val networkFailure = when (val result = endpoint.allSets()) {
@@ -51,6 +53,22 @@ class Repository(
         }
         val cards = queryAll<Card>()
         emit(success(data = cards, networkFailure = networkFailure))
+    }
+
+    fun allCards(
+        page: Int,
+        context: CoroutineContext
+    ): LiveData<ListState<Card>> = liveData(context){
+        emit(inProgress())
+        if (page == 0) cachedCards.clear()
+        val networkFailure = when (val result = endpoint.allCards(page = page)) {
+            is RequestStatus.Success -> {
+                result.data?.cards?.mapTo(cachedCards) { it.toEntity() }
+                null
+            }
+            is RequestStatus.Failure -> result.cause
+        }
+        emit(success(data = cachedCards, networkFailure = networkFailure))
     }
 
     private suspend inline fun <reified T: RealmObject> queryAll() = withContext(Dispatchers.Main) {

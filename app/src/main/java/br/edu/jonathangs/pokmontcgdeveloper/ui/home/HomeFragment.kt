@@ -1,13 +1,10 @@
 package br.edu.jonathangs.pokmontcgdeveloper.ui.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.IntegerRes
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
 import br.edu.jonathangs.pokmontcgdeveloper.R
+import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsFragment
 import br.edu.jonathangs.pokmontcgdeveloper.ui.sets.SetsFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -25,6 +22,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setupViewPager() {
         val adapter = HomeAdapter(this)
         adapter.addItem(SetsFragment())
+        adapter.addItem(CardsFragment())
         content_view.adapter = adapter
         content_view.setCurrentItem(0, false)
     }
@@ -35,10 +33,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun select(id: Int): Boolean {
         when (id) {
-            R.id.action_sets -> content_view.setCurrentItem(0, true)
-            //R.id.action_cards -> content_view.setCurrentItem(1, true)
+            R.id.action_sets -> changePage(position = 0)
+            R.id.action_cards -> changePage(position = 1)
         }
         return true
+    }
+
+    private fun changePage(position: Int) {
+        content_view.setCurrentItem(position, true)
     }
 
 }

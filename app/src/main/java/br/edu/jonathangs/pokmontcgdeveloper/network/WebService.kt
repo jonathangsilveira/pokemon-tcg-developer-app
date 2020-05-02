@@ -12,7 +12,10 @@ interface WebService {
     fun allSets(): Call<Sets>
 
     @GET("cards")
-    fun allCards(): Call<Cards>
+    fun allCards(
+        @Query(value = "pageSize") pageSize: Int,
+        @Query(value = "page") page: Int
+    ): Call<Cards>
 
     @GET("cards")
     fun setCards(@Query("setCode") setCode: String): Call<Cards>

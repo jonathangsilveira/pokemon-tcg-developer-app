@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import br.edu.jonathangs.pokmontcgdeveloper.R
 import br.edu.jonathangs.pokmontcgdeveloper.database.Card
 import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
+import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsAdapter
 import kotlinx.android.synthetic.main.fragment_set.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -62,7 +63,10 @@ class SetFragment : Fragment(R.layout.fragment_set) {
     }
 
     private fun onSuccess(state: ListState.Success<Card>) {
-        set_cards.adapter = SetAdapter(cards = state.data ?: emptyList())
+        set_cards.adapter =
+            CardsAdapter(
+                cards = state.data ?: emptyList()
+            )
         hideLoading()
     }
 

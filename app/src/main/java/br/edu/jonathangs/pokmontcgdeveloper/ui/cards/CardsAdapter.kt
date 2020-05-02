@@ -1,4 +1,4 @@
-package br.edu.jonathangs.pokmontcgdeveloper.ui.set
+package br.edu.jonathangs.pokmontcgdeveloper.ui.cards
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +9,8 @@ import br.edu.jonathangs.pokmontcgdeveloper.R
 import br.edu.jonathangs.pokmontcgdeveloper.database.Card
 import com.squareup.picasso.Picasso
 
-internal class SetAdapter(private val cards: List<Card>)
-    : RecyclerView.Adapter<SetAdapter.SetViewHolder>() {
+internal class CardsAdapter(private val cards: List<Card>)
+    : RecyclerView.Adapter<CardsAdapter.SetViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
         val layout = LayoutInflater.from(parent.context)

@@ -11,6 +11,8 @@ class Endpoint(private val service: WebService) {
 
     fun setCards(setCode: String) = safeCall { service.setCards(setCode) }
 
+    fun allCards(pageSize: Int = 18, page: Int = 1) = safeCall { service.allCards(pageSize, page) }
+
     private inline fun <T> safeCall(call: () -> Call<T>): RequestStatus<T> {
         return try {
             val response = call().execute()
