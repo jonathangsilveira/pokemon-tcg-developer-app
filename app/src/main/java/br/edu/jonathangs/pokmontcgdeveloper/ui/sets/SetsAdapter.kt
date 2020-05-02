@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.sets_item.view.*
 internal class SetsAdapter(
     private val style: Style = Style.SIMPLE,
     private val items: List<Set>,
-    private val onClick: (setCode: String, backdropImage: String) -> Unit = { _: String, _: String -> }
+    private val onClick: (code: String, name: String) -> Unit = { _: String, _: String -> }
 ) : RecyclerView.Adapter<SetsAdapter.SetsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetsViewHolder {
@@ -55,7 +55,7 @@ internal class SetsAdapter(
             Picasso.get().load(item.symbolUrl).into(itemView.symbol_image)
             itemView.name_text.text = item.name
             itemView.total_cards_text.text = item.totalCards.toString()
-            itemView.setOnClickListener { onClick(item.code, item.logoUrl) }
+            itemView.setOnClickListener { onClick(item.code, item.name) }
         }
 
     }
