@@ -2,7 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="PokemonTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">@color/colorAccent</item>
         <item name="colorOnPrimary">@color/colorAccent</item>
