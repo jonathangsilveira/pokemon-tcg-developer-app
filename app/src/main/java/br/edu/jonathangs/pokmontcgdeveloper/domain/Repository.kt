@@ -51,17 +51,18 @@ class Repository(
             }
             is RequestStatus.Failure -> result.cause
         }
-        val cards = queryAll<Card>()
+        val cards = queryBySet(setCode)
         emit(success(data = cards, networkFailure = networkFailure))
     }
 
     fun allCards(
-        page: Int,
+        pageSize: Int = 18,
+        page: Int = 1,
         context: CoroutineContext
     ): LiveData<ListState<Card>> = liveData(context){
         emit(inProgress())
         if (page == 0) cachedCards.clear()
-        val networkFailure = when (val result = endpoint.allCards(page = page)) {
+        val networkFailure = when (val result = endpoint.allCards(pageSize, page)) {
             is RequestStatus.Success -> {
                 result.data?.cards?.mapTo(cachedCards) { it.toEntity() }
                 null
@@ -73,6 +74,10 @@ class Repository(
 
     private suspend inline fun <reified T: RealmObject> queryAll() = withContext(Dispatchers.Main) {
         database.where<T>().findAll()
+    }
+
+    private suspend fun queryBySet(code: String) = withContext(Dispatchers.Main) {
+        database.where<Card>().equalTo("setCode", code).findAll()
     }
 
     private suspend fun save(sets: Sets?) = withContext(Dispatchers.Main) {
