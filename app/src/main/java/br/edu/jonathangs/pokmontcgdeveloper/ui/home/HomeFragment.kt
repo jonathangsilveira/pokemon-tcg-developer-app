@@ -3,6 +3,7 @@ package br.edu.jonathangs.pokmontcgdeveloper.ui.home
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import br.edu.jonathangs.pokmontcgdeveloper.R
 import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsFragment
 import br.edu.jonathangs.pokmontcgdeveloper.ui.sets.SetsFragment
@@ -23,6 +24,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val adapter = HomeAdapter(this)
         adapter.addItem(SetsFragment())
         adapter.addItem(CardsFragment())
+        content_view.onPageScrollStateChanged { state ->
+            if (state == ViewPager2.SCROLL_STATE_IDLE)
+                when (content_view.currentItem) {
+                    0 -> navigation_view.selectedItemId = R.id.action_sets
+                    1 -> navigation_view.selectedItemId = R.id.action_cards
+                }
+        }
         content_view.adapter = adapter
         content_view.setCurrentItem(0, false)
     }
@@ -41,6 +49,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun changePage(position: Int) {
         content_view.setCurrentItem(position, true)
+    }
+
+    private inline fun ViewPager2.onPageScrollStateChanged(
+        crossinline onStateChanged: (state: Int) -> Unit
+    ) {
+        val callback = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                onStateChanged(state)
+            }
+        }
+        registerOnPageChangeCallback(callback)
     }
 
 }
