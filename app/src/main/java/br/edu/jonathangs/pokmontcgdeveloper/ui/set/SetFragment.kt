@@ -2,6 +2,7 @@ package br.edu.jonathangs.pokmontcgdeveloper.ui.set
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
@@ -9,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import br.edu.jonathangs.pokmontcgdeveloper.R
 import br.edu.jonathangs.pokmontcgdeveloper.database.Card
 import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
+import br.edu.jonathangs.pokmontcgdeveloper.network.NetworkException
 import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsAdapter
 import kotlinx.android.synthetic.main.fragment_set.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -68,10 +70,15 @@ class SetFragment : Fragment(R.layout.fragment_set) {
                 cards = state.data ?: emptyList()
             )
         hideLoading()
+        if (state.networkFailure is NetworkException)
+            showNetworkFailure(state.networkFailure)
     }
 
     private fun onFailure(state: ListState.Failure<Card>) {
         hideLoading()
+    }
+    private fun showNetworkFailure(cause: NetworkException) {
+        Toast.makeText(requireActivity(), cause.message, Toast.LENGTH_SHORT).show()
     }
 
     companion object {
