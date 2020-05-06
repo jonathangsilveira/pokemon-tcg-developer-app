@@ -22,7 +22,7 @@ internal class CardsViewModel(
     }
 
     internal fun nextPage() {
-        val currentPage = page.value ?: 0
+        val currentPage = page.value!!
         page.value = currentPage.inc()
     }
 
