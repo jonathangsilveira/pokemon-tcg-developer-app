@@ -1,10 +1,7 @@
-package br.edu.jonathangs.pokmontcgdeveloper.database
+package br.edu.jonathangs.pokmontcgdeveloper.database.model
 
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-
-open class Set(
-    @PrimaryKey var code: String = "",
+class Set(
+    var code: String = "",
     var ptcgoCode: String? = null,
     var name: String = "",
     var series: String = "",
@@ -14,4 +11,4 @@ open class Set(
     var releaseDate: String = "",
     var symbolUrl: String = "",
     var logoUrl: String = ""
-): RealmObject()
+)

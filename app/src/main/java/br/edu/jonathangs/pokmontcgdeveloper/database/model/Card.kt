@@ -1,10 +1,7 @@
-package br.edu.jonathangs.pokmontcgdeveloper.database
+package br.edu.jonathangs.pokmontcgdeveloper.database.model
 
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-
-open class Card (
-    @PrimaryKey var id: String = "",
+class Card (
+    var id: String = "",
     var name: String = "",
     var nationalPokedexNumber: Int = -1,
     var imageUrl: String = "",
@@ -14,4 +11,4 @@ open class Card (
     var series: String = "",
     var `set`: String = "",
     var setCode: String = ""
-): RealmObject()
+)
