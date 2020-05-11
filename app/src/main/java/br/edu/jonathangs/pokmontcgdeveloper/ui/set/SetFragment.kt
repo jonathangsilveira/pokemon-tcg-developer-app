@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Card
+import br.edu.jonathangs.pokmontcgdeveloper.database.model.CardPreview
 import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
 import br.edu.jonathangs.pokmontcgdeveloper.network.NetworkException
 import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsAdapter
@@ -48,7 +48,7 @@ class SetFragment : Fragment(R.layout.fragment_set) {
         viewModel.cards.observe(viewLifecycleOwner) { render(state = it) }
     }
 
-    private fun render(state: ListState<Card>) {
+    private fun render(state: ListState<CardPreview>) {
         when (state) {
             is ListState.InProgress -> showLoading()
             is ListState.Success -> onSuccess(state)
@@ -64,7 +64,7 @@ class SetFragment : Fragment(R.layout.fragment_set) {
         loading_view.visibility = View.GONE
     }
 
-    private fun onSuccess(state: ListState.Success<Card>) {
+    private fun onSuccess(state: ListState.Success<CardPreview>) {
         set_cards.adapter =
             CardsAdapter(
                 cards = state.data ?: emptyList()
@@ -74,7 +74,7 @@ class SetFragment : Fragment(R.layout.fragment_set) {
             showNetworkFailure(state.networkFailure)
     }
 
-    private fun onFailure(state: ListState.Failure<Card>) {
+    private fun onFailure(state: ListState.Failure<CardPreview>) {
         hideLoading()
     }
     private fun showNetworkFailure(cause: NetworkException) {

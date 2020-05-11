@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Set
+import br.edu.jonathangs.pokmontcgdeveloper.database.model.Set
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.sets_card_item.view.*
 import kotlinx.android.synthetic.main.sets_item.view.*

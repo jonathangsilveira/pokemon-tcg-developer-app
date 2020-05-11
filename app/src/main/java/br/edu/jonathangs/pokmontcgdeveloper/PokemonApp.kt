@@ -1,15 +1,15 @@
 package br.edu.jonathangs.pokmontcgdeveloper
 
 import android.app.Application
-import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
+import br.edu.jonathangs.pokmontcgdeveloper.database.PokemonDatabase
+import br.edu.jonathangs.pokmontcgdeveloper.domain.CardRepository
+import br.edu.jonathangs.pokmontcgdeveloper.domain.SetRepository
 import br.edu.jonathangs.pokmontcgdeveloper.network.Endpoint
 import br.edu.jonathangs.pokmontcgdeveloper.network.WebService
 import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsViewModel
 import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetViewModel
 import br.edu.jonathangs.pokmontcgdeveloper.ui.sets.SetsViewModel
 import com.google.gson.GsonBuilder
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -24,30 +24,24 @@ class PokemonApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        configRealm()
         configKoin()
     }
 
     private fun configKoin() {
         startKoin {
             androidContext(this@PokemonApp)
-            modules(listOf(networkModule(), appModule()))
+            modules(listOf(databaseModule(), networkModule(), appModule()))
         }
     }
 
-    private fun configRealm() {
-        Realm.init(this);
-        val config = RealmConfiguration.Builder()
-            .name("pokemontcg.realm")
-            .schemaVersion(1)
-            .deleteRealmIfMigrationNeeded()
-            //.initialData {  }
-            .build()
-        Realm.setDefaultConfiguration(config)
-    }
 
     private fun appModule() = module {
-        single { Repository(get()) }
+        single {
+            SetRepository(endpoint = get(), dao = get())
+        }
+        single {
+            CardRepository(endpoint = get(), dao = get())
+        }
         viewModel {
             SetsViewModel(
                 application = this@PokemonApp,
@@ -83,6 +77,13 @@ class PokemonApp : Application() {
             .build()
         val webservice = retrofit.create<WebService>()
         single { Endpoint(webservice) }
+    }
+
+    private fun databaseModule() = module {
+        val db = PokemonDatabase.getDatabase(this@PokemonApp)
+        single { db }
+        single { db.cardsDao() }
+        single { db.setsDao() }
     }
 
 }

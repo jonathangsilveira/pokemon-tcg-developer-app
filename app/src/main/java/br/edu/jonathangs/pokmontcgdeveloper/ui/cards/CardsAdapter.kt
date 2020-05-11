@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Card
+import br.edu.jonathangs.pokmontcgdeveloper.database.model.CardPreview
 import com.squareup.picasso.Picasso
 
-internal class CardsAdapter(private val cards: List<Card>)
+internal class CardsAdapter(private val cards: List<CardPreview>)
     : RecyclerView.Adapter<CardsAdapter.SetViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
@@ -27,7 +27,7 @@ internal class CardsAdapter(private val cards: List<Card>)
 
     inner class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(card: Card) {
+        fun bind(card: CardPreview) {
             Picasso.get()
                 .load(card.imageUrl)
                 .placeholder(R.drawable.card_back)

@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Card
+import br.edu.jonathangs.pokmontcgdeveloper.database.model.CardPreview
 import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
 import kotlinx.android.synthetic.main.fragment_cards.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -33,7 +33,7 @@ class CardsFragment : Fragment(R.layout.fragment_cards) {
         viewModel.cards.observe(viewLifecycleOwner) { render(state = it) }
     }
 
-    private fun render(state: ListState<Card>) {
+    private fun render(state: ListState<CardPreview>) {
         when (state) {
             is ListState.InProgress -> showLoading()
             is ListState.Success -> onSuccess(state)
@@ -49,12 +49,12 @@ class CardsFragment : Fragment(R.layout.fragment_cards) {
         card_refresher.isRefreshing = false
     }
 
-    private fun onSuccess(state: ListState.Success<Card>) {
+    private fun onSuccess(state: ListState.Success<CardPreview>) {
         cards.adapter = CardsAdapter(cards = state.data ?: emptyList())
         hideLoading()
     }
 
-    private fun onFailure(state: ListState.Failure<Card>) {
+    private fun onFailure(state: ListState.Failure<CardPreview>) {
         hideLoading()
     }
 

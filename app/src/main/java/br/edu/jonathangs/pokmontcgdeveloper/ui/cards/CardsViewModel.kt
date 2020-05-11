@@ -5,12 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
+import br.edu.jonathangs.pokmontcgdeveloper.domain.CardRepository
 import kotlinx.coroutines.Dispatchers
 
 internal class CardsViewModel(
     application: Application,
-    private val repo: Repository
+    private val repo: CardRepository
 ) : AndroidViewModel(application) {
 
     private val io = viewModelScope.coroutineContext + Dispatchers.IO

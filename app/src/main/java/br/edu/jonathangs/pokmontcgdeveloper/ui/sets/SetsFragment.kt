@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Set
+import br.edu.jonathangs.pokmontcgdeveloper.database.model.Set
 import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
 import br.edu.jonathangs.pokmontcgdeveloper.network.NetworkException
 import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetFragment

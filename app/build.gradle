@@ -70,6 +70,6 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:2.0.1"
 
     implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
 }
