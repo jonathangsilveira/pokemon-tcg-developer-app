@@ -1,126 +1,56 @@
 package br.edu.jonathangs.pokmontcgdeveloper.domain
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
-import br.edu.jonathangs.pokmontcgdeveloper.database.Card
-import br.edu.jonathangs.pokmontcgdeveloper.database.Set
-import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState.Companion.inProgress
-import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState.Companion.success
-import br.edu.jonathangs.pokmontcgdeveloper.network.Endpoint
-import br.edu.jonathangs.pokmontcgdeveloper.network.RequestStatus
-import br.edu.jonathangs.pokmontcgdeveloper.network.data.Cards
-import br.edu.jonathangs.pokmontcgdeveloper.network.data.Sets
-import io.realm.ImportFlag
-import io.realm.Realm
-import io.realm.Realm.getDefaultInstance
-import io.realm.RealmObject
-import io.realm.kotlin.where
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
+import androidx.room.withTransaction
+import br.edu.jonathangs.pokmontcgdeveloper.data.Result
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.PokemonDatabase
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.Sets
+import br.edu.jonathangs.pokmontcgdeveloper.data.remote.WebService
+import br.edu.jonathangs.pokmontcgdeveloper.data.remote.data.SetsResponse
+import br.edu.jonathangs.pokmontcgdeveloper.data.remote.safeCall
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.Set as SetModel
 
 class Repository(
-    private val endpoint: Endpoint,
-    private val database: Realm = getDefaultInstance()
+    private val webService: WebService,
+    private val database: PokemonDatabase
 ) {
 
-    fun allSets(context: CoroutineContext): LiveData<ListState<Set>> = liveData(context) {
-        emit(inProgress())
-        val networkFailure = when (val result = endpoint.allSets()) {
-            is RequestStatus.Success -> {
-                save(result.data)
-                null
-            }
-            is RequestStatus.Failure -> result.cause
+    fun flowSets(page: Int = 1): Flow<LoadState<Sets>> = flow {
+        emit(LoadState.InProgress)
+        when (val result = safeCall { webService.allSets() }) {
+            is Result.Success -> saveSets(result.data)
+            is Result.Failure -> emit(LoadState.Exception(result.throwable))
         }
-        val sets = queryAll<Set>()
-        emit(success(data = sets, networkFailure = networkFailure))
+        val sets: Flow<LoadState<Sets>> = flowAllSets().map { LoadState.Success(it) }
+        emitAll(sets)
     }
 
-    fun setCards(
-        setCode: String,
-        context: CoroutineContext
-    ): LiveData<ListState<Card>> = liveData(context) {
-        emit(inProgress())
-        val networkFailure = when (val result = endpoint.setCards(setCode)) {
-            is RequestStatus.Success -> {
-                save(result.data)
-                null
-            }
-            is RequestStatus.Failure -> result.cause
-        }
-        val cards = queryBySet(setCode)
-        emit(success(data = cards, networkFailure = networkFailure))
-    }
+    private fun flowAllSets() = database.setDao().flowAll()
 
-    fun allCards(
-        pageSize: Int = 18,
-        page: Int = 1,
-        context: CoroutineContext
-    ): LiveData<ListState<Card>> = liveData(context){
-        emit(inProgress())
-        val networkFailure = when (val result = endpoint.allCards(pageSize, page)) {
-            is RequestStatus.Success -> {
-                save(result.data)
-                null
-            }
-            is RequestStatus.Failure -> result.cause
-        }
-        val limit = pageSize * page
-        val cards = withContext(Dispatchers.Main) {
-            database.where<Card>().limit(limit.toLong()).findAll()
-        }
-        emit(success(data = cards, networkFailure = networkFailure))
-    }
-
-    private suspend inline fun <reified T: RealmObject> queryAll() = withContext(Dispatchers.Main) {
-        database.where<T>().findAll()
-    }
-
-    private suspend fun queryBySet(code: String) = withContext(Dispatchers.Main) {
-        database.where<Card>().equalTo("setCode", code).findAll()
-    }
-
-    private suspend fun save(sets: Sets?) = withContext(Dispatchers.Main) {
-        database.executeTransaction {
-            sets?.sets?.forEach { set ->
-                it.copyToRealmOrUpdate(set.toEntity(), ImportFlag.CHECK_SAME_VALUES_BEFORE_SET)
-            }
+    private suspend fun saveSets(response: SetsResponse?) {
+        database.withTransaction {
+            database.setDao().deleteAll()
+            response ?: return@withTransaction
+            val sets = response.sets.map { it.toModel }
+            database.setDao().insertOrReplace(sets)
         }
     }
 
-    private suspend fun save(cards: Cards?) = withContext(Dispatchers.Main) {
-        database.executeTransaction {
-            cards?.cards?.forEach { card ->
-                it.copyToRealmOrUpdate(card.toEntity(), ImportFlag.CHECK_SAME_VALUES_BEFORE_SET)
-            }
-        }
-    }
-
-    private fun Sets.Set.toEntity() = Set(
-        code = this.code,
-        ptcgoCode = this.ptcgoCode,
-        name = this.name,
-        series = this.series,
-        totalCards = this.totalCards,
-        standardLegal = this.standardLegal,
-        expandedLegal = this.expandedLegal,
-        releaseDate = this.releaseDate,
-        symbolUrl = this.symbolUrl,
-        logoUrl = this.logoUrl
-    )
-
-    private fun Cards.Card.toEntity() = Card(
-        id = this.id,
-        name = this.name,
-        series = this.series,
-        imageUrl = this.imageUrl,
-        imageUrlHiRes = this.imageUrlHiRes,
-        nationalPokedexNumber = this.nationalPokedexNumber,
-        number = this.number,
-        rarity = this.rarity,
-        set = this.set,
-        setCode = this.setCode
-    )
+    private val SetsResponse.Set.toModel: SetModel
+        get() = SetModel(
+            code = this.code,
+            ptcgoCode = this.ptcgoCode,
+            name = this.name,
+            series = this.series,
+            totalCards = this.totalCards,
+            standardLegal = this.standardLegal,
+            expandedLegal = this.expandedLegal,
+            releaseDate = this.releaseDate,
+            symbolUrl = this.symbolUrl,
+            logoUrl = this.logoUrl
+        )
 
 }

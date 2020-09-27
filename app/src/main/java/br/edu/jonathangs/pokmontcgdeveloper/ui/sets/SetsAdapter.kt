@@ -5,16 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Set
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.Sets
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.Set
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.sets_card_item.view.*
 import kotlinx.android.synthetic.main.sets_item.view.*
 
 internal class SetsAdapter(
     private val style: Style = Style.SIMPLE,
-    private val items: List<Set>,
     private val onClick: (code: String, name: String) -> Unit = { _: String, _: String -> }
 ) : RecyclerView.Adapter<SetsAdapter.SetsViewHolder>() {
+
+    private val items = mutableListOf<Set>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetsViewHolder {
         return when (style) {
@@ -39,6 +41,16 @@ internal class SetsAdapter(
 
     override fun onBindViewHolder(holder: SetsViewHolder, position: Int) {
         holder.bind(item = items[position])
+    }
+
+    fun setItems(items: Sets) {
+        this.items.clear()
+        addItems(items)
+    }
+
+    fun addItems(items: Sets) {
+        this.items.addAll(items)
+        notifyItemInserted(this.items.size)
     }
 
     inner class SimpleViewHolder(itemView: View) : SetsViewHolder(itemView) {

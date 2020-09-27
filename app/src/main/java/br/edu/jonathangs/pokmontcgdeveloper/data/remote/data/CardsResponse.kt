@@ -1,4 +1,4 @@
-package br.edu.jonathangs.pokmontcgdeveloper.network.data
+package br.edu.jonathangs.pokmontcgdeveloper.data.remote.data
 
 
 data class CardsResponse(val cards: List<Card>) {

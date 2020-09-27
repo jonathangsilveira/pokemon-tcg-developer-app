@@ -1,4 +1,4 @@
-package br.edu.jonathangs.pokmontcgdeveloper.network
+package br.edu.jonathangs.pokmontcgdeveloper.data
 
 sealed class Result<out T> {
 

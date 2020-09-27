@@ -14,6 +14,4 @@ class SetViewModel(
 
     private val io = viewModelScope.coroutineContext + Dispatchers.IO
 
-    val cards = repo.setCards(setCode = setCode, context = io)
-
 }

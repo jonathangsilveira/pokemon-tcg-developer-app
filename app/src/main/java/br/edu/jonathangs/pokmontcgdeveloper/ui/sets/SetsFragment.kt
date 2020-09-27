@@ -5,14 +5,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Set
-import br.edu.jonathangs.pokmontcgdeveloper.domain.ListState
-import br.edu.jonathangs.pokmontcgdeveloper.network.NetworkException
-import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetFragment
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.Sets
+import br.edu.jonathangs.pokmontcgdeveloper.domain.LoadState
 import kotlinx.android.synthetic.main.fragment_sets.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,8 +20,17 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
 
     private val viewModel: SetsViewModel by viewModel()
 
+    private val adapter = SetsAdapter(
+        style = SetsAdapter.Style.CARD,
+        onClick = onClick()
+    )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sets_refresher.setOnRefreshListener {
+            viewModel.refresh()
+            sets_refresher.isRefreshing = false
+        }
         setupRecyclerView()
         subscribe()
     }
@@ -35,17 +41,24 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
             RecyclerView.VERTICAL,
             false
         )
+        set_list.adapter = adapter
     }
 
     private fun subscribe() {
-        viewModel.sets.observe(viewLifecycleOwner) { render(state = it) }
+        viewModel.observeSetsState.observe(
+            viewLifecycleOwner,
+            onChanged = { state -> render(state) }
+        )
     }
 
-    private fun render(state: ListState<Set>) {
+    private fun render(state: LoadState<Sets>) {
         when (state) {
-            is ListState.InProgress -> showLoading()
-            is ListState.Success -> onSuccess(state)
-            is ListState.Failure -> onFailure(state)
+            is LoadState.InProgress -> showLoading()
+            is LoadState.Success -> {
+                state.data?.let { adapter.setItems(items = state.data) }
+                hideLoading()
+            }
+            is LoadState.Exception -> showFailure(state.cause)
         }
     }
 
@@ -57,29 +70,12 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
         loading_view.visibility = View.GONE
     }
 
-    private fun onSuccess(state: ListState.Success<Set>) {
-        state.data?.let {
-            set_list.adapter = SetsAdapter(
-                style = SetsAdapter.Style.CARD,
-                items = it,
-                onClick = onClick()
-            )
-        }
-        hideLoading()
-        if (state.networkFailure is NetworkException)
-            showNetworkFailure(state.networkFailure)
-    }
-
     private fun onClick(): (code: String, name: String) -> Unit = { setCode, name ->
-        val bundle = SetFragment.newBundle(setCode, name)
-        findNavController().navigate(R.id.action_home_to_set, bundle)
+        /*val bundle = SetFragment.newBundle(setCode, name)
+        findNavController().navigate(R.id.action_home_to_set, bundle)*/
     }
 
-    private fun onFailure(state: ListState.Failure<Set>) {
-        hideLoading()
-    }
-
-    private fun showNetworkFailure(cause: NetworkException) {
+    private fun showFailure(cause: Throwable) {
         Toast.makeText(requireActivity(), cause.message, Toast.LENGTH_SHORT).show()
     }
 
