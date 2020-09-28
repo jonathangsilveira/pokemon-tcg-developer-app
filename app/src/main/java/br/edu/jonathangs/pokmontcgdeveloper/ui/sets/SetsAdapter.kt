@@ -44,8 +44,12 @@ internal class SetsAdapter(
     }
 
     fun setItems(items: Sets) {
-        this.items.clear()
+        clearItems()
         addItems(items)
+    }
+
+    private fun clearItems() {
+        this.items.clear()
     }
 
     fun addItems(items: Sets) {

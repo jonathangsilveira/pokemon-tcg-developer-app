@@ -5,11 +5,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.Sets
 import br.edu.jonathangs.pokmontcgdeveloper.domain.LoadState
+import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetFragment
 import kotlinx.android.synthetic.main.fragment_sets.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -71,8 +73,8 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
     }
 
     private fun onClick(): (code: String, name: String) -> Unit = { setCode, name ->
-        /*val bundle = SetFragment.newBundle(setCode, name)
-        findNavController().navigate(R.id.action_home_to_set, bundle)*/
+        val bundle = SetFragment.newBundle(setCode, name)
+        findNavController().navigate(R.id.action_home_to_set, bundle)
     }
 
     private fun showFailure(cause: Throwable) {

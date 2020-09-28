@@ -5,9 +5,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.data.remote.NetworkException
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.SetCard
+import br.edu.jonathangs.pokmontcgdeveloper.domain.LoadState
+import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsAdapter
 import kotlinx.android.synthetic.main.fragment_set.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -23,6 +26,8 @@ class SetFragment : Fragment(R.layout.fragment_set) {
 
     private val viewModel: SetViewModel by viewModel { parametersOf(code) }
 
+    private val adapter = CardsAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,14 +38,37 @@ class SetFragment : Fragment(R.layout.fragment_set) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.title = name
-        toolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
+        setupToolbar()
+        setupRecyclerView()
         subscribe()
     }
 
+    private fun setupRecyclerView() {
+        set_cards.adapter = adapter
+    }
+
+    private fun setupToolbar() {
+        toolbar.title = name
+        toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+    }
+
     private fun subscribe() {
+        viewModel.observeCards.observe(
+            owner = viewLifecycleOwner,
+            onChanged = { state -> render(state) }
+        )
+    }
+
+    private fun render(state: LoadState<List<SetCard>>) {
+        when (state) {
+            is LoadState.InProgress -> showLoading()
+            is LoadState.Exception -> showFailure(state.cause)
+            is LoadState.Success -> {
+                hideLoading()
+                state.data ?: return
+                adapter.setItems(state.data)
+            }
+        }
     }
 
     private fun showLoading() {
@@ -51,7 +79,7 @@ class SetFragment : Fragment(R.layout.fragment_set) {
         loading_view.visibility = View.GONE
     }
 
-    private fun showNetworkFailure(cause: NetworkException) {
+    private fun showFailure(cause: Throwable) {
         Toast.makeText(requireActivity(), cause.message, Toast.LENGTH_SHORT).show()
     }
 

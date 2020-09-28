@@ -3,14 +3,14 @@ package br.edu.jonathangs.pokmontcgdeveloper.ui.sets
 import android.app.Application
 import androidx.lifecycle.*
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.Sets
+import br.edu.jonathangs.pokmontcgdeveloper.data.repo.SetsRepository
 import br.edu.jonathangs.pokmontcgdeveloper.domain.LoadState
-import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 
 class SetsViewModel(
     application: Application,
-    repo: Repository
+    repo: SetsRepository
 ): AndroidViewModel(application) {
 
     private val refreshTrigger = MutableLiveData(Unit)

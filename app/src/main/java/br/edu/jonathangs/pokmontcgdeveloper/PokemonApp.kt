@@ -3,6 +3,8 @@ package br.edu.jonathangs.pokmontcgdeveloper
 import android.app.Application
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.PokemonDatabase
 import br.edu.jonathangs.pokmontcgdeveloper.data.remote.WebService
+import br.edu.jonathangs.pokmontcgdeveloper.data.repo.SetRepository
+import br.edu.jonathangs.pokmontcgdeveloper.data.repo.SetsRepository
 import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
 import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsViewModel
 import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetViewModel
@@ -34,6 +36,8 @@ class PokemonApp : Application() {
 
     private fun appModule() = module {
         single { Repository(webService = get(), database = get()) }
+        single { SetsRepository(webService = get(), database = get()) }
+        single { SetRepository(webService = get(), database = get()) }
         viewModel {
             SetsViewModel(
                 application = this@PokemonApp,

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 typealias Sets = List<Set>
 
 @androidx.room.Dao
-interface SetDao: Dao<Set> {
+interface SetDao: BaseDao<Set> {
     @Query(value = "DELETE FROM sets")
     fun deleteAll()
     @Query(value = "SELECT * FROM sets")
