@@ -1,7 +1,8 @@
 <resources>
 
+    <style name="Theme"/>
     <!-- Base application theme. -->
-    <style name="PokemonTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Pokemon" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">@color/colorAccent</item>
         <item name="colorOnPrimary">@color/colorAccent</item>

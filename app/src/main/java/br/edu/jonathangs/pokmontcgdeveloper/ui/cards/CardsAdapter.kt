@@ -27,17 +27,20 @@ internal class CardsAdapter: RecyclerView.Adapter<CardsAdapter.SetViewHolder>() 
     ) = holder.bind(card = cards[position])
 
     fun setItems(cards: List<Card>) {
+        val previousSize = itemCount
         clearItems()
-        addItems(cards)
+        this.cards.addAll(cards)
+        notifyItemRangeRemoved(0, previousSize)
+        notifyItemRangeInserted(0, itemCount)
     }
 
     private fun clearItems() {
         this.cards.clear()
     }
 
-    private fun addItems(cards: List<Card>) {
+    fun addItems(cards: List<Card>) {
         this.cards.addAll(cards)
-        notifyItemInserted(this.cards.size)
+        notifyItemInserted(itemCount)
     }
 
     inner class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

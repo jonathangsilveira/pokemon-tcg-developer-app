@@ -14,5 +14,6 @@ class SetCard(
     override val rarity: String? = null,
     override val series: String,
     override val `set`: String,
-    override val setCode: String
+    override val setCode: String,
+    override val types: List<String>
 ): Card()

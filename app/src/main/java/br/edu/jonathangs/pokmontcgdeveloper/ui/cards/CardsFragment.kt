@@ -22,7 +22,7 @@ class CardsFragment : Fragment(R.layout.fragment_cards) {
 
     private fun setupSwipeRefresh() {
         card_refresher.setOnRefreshListener {
-            viewModel.nextPage()
+
         }
     }
 

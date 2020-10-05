@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.SetCardDao
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.dao.SetDao
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.Set
@@ -11,9 +12,10 @@ import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.SetCard
 
 @Database(
     entities = [Set::class, SetCard::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class PokemonDatabase: RoomDatabase() {
 
     abstract fun setDao(): SetDao
@@ -36,7 +38,8 @@ abstract class PokemonDatabase: RoomDatabase() {
                     context.applicationContext,
                     PokemonDatabase::class.java,
                     "pokemon"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                    .build()
             }
         }
     }

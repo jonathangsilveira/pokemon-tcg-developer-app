@@ -23,10 +23,4 @@ interface WebService {
     @GET("cards")
     suspend fun pagedCardsFrom(@Query("setCode") set: String): Response<CardsResponse>
 
-    /*@GET("cards")
-    fun cards(
-        @Query(value = "pageSize") pageSize: Int,
-        @Query(value = "page") page: Int
-    ): Call<CardsResponse>*/
-
 }

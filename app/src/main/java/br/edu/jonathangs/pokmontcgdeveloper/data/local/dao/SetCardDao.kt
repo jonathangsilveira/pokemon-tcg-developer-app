@@ -15,4 +15,6 @@ interface SetCardDao: BaseDao<SetCard> {
     fun flowCardsFromSet(setCode: String): Flow<SetCards>
     @Query("DELETE FROM set_card WHERE setCode = :setCode")
     fun deleteAllCardsFrom(setCode: String)
+    @Query("SELECT * FROM set_card WHERE set_card.types in (:types)")
+    fun flowCards(types: List<String>): SetCards
 }

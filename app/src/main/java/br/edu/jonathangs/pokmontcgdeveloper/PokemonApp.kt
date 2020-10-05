@@ -2,11 +2,14 @@ package br.edu.jonathangs.pokmontcgdeveloper
 
 import android.app.Application
 import br.edu.jonathangs.pokmontcgdeveloper.data.local.PokemonDatabase
+import br.edu.jonathangs.pokmontcgdeveloper.data.remote.CardsWebService
 import br.edu.jonathangs.pokmontcgdeveloper.data.remote.WebService
+import br.edu.jonathangs.pokmontcgdeveloper.data.repo.SearchRepository
 import br.edu.jonathangs.pokmontcgdeveloper.data.repo.SetRepository
 import br.edu.jonathangs.pokmontcgdeveloper.data.repo.SetsRepository
 import br.edu.jonathangs.pokmontcgdeveloper.domain.Repository
 import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsViewModel
+import br.edu.jonathangs.pokmontcgdeveloper.ui.search.SearchViewModel
 import br.edu.jonathangs.pokmontcgdeveloper.ui.set.SetViewModel
 import br.edu.jonathangs.pokmontcgdeveloper.ui.sets.SetsViewModel
 import com.google.gson.GsonBuilder
@@ -38,6 +41,7 @@ class PokemonApp : Application() {
         single { Repository(webService = get(), database = get()) }
         single { SetsRepository(webService = get(), database = get()) }
         single { SetRepository(webService = get(), database = get()) }
+        single { SearchRepository(webservice = get(), database = get()) }
         viewModel {
             SetsViewModel(
                 application = this@PokemonApp,
@@ -57,6 +61,12 @@ class PokemonApp : Application() {
                 repo = get()
             )
         }
+        viewModel {
+            SearchViewModel(
+                application = this@PokemonApp,
+                repo = get()
+            )
+        }
     }
 
     private fun networkModule() = module {
@@ -72,6 +82,7 @@ class PokemonApp : Application() {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
         single { retrofit.create<WebService>() }
+        single { retrofit.create<CardsWebService>() }
     }
 
     private fun databaseModule() = module {

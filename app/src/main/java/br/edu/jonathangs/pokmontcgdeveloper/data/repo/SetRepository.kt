@@ -48,7 +48,8 @@ class SetRepository(
             rarity,
             series,
             set,
-            setCode
+            setCode,
+            types
         )
 
 }

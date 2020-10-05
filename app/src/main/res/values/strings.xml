@@ -8,4 +8,13 @@
     <string name="symbol_image">symbol image</string>
     <string name="backdrop_image">backdrop image</string>
     <string name="minicard">Mini card</string>
+    <string name="search">Search</string>
+    <string name="grass">Grass</string>
+    <string name="psychic">Psychic</string>
+    <string name="metal">Metal</string>
+    <string name="fighting">Fighting</string>
+    <string name="fire">Fire</string>
+    <string name="water">Water</string>
+    <string name="dark">Dark</string>
+    <string name="normal">Normal</string>
 </resources>
