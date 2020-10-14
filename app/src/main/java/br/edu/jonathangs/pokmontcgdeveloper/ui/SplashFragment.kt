@@ -23,8 +23,6 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         }
     }
 
-    private fun home() {
-        findNavController().navigate(R.id.action_splash_to_home)
-    }
+    private fun home() { findNavController().navigate(R.id.action_splash_to_home) }
 
 }

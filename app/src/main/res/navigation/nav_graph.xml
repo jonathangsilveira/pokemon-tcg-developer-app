@@ -28,6 +28,13 @@
             <argument android:name="backdropImage"
                 app:argType="string"/>
         </action>
+        <action
+            android:id="@+id/action_home_to_search"
+            app:destination="@id/search"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
     <fragment
         android:id="@+id/set"
@@ -40,4 +47,9 @@
             android:name="backdropImage"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/search"
+        android:name="br.edu.jonathangs.pokmontcgdeveloper.ui.search.SearchFragment"
+        android:label="@string/search"
+        tools:layout="@layout/fragment_search" />
 </navigation>

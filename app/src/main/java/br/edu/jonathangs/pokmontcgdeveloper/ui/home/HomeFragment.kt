@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.ui.cards.CardsFragment
+import br.edu.jonathangs.pokmontcgdeveloper.ui.search.SearchFragment
 import br.edu.jonathangs.pokmontcgdeveloper.ui.sets.SetsFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -23,7 +23,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setupViewPager() {
         val adapter = HomeAdapter(this)
         adapter.addItem(SetsFragment())
-        adapter.addItem(CardsFragment())
+        //adapter.addItem(CardsFragment())
+        adapter.addItem(SearchFragment.newInstance())
         content_view.onPageScrollStateChanged { state ->
             if (state == ViewPager2.SCROLL_STATE_IDLE)
                 when (content_view.currentItem) {

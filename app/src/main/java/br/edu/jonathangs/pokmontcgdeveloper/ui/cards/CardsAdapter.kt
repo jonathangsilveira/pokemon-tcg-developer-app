@@ -6,11 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.jonathangs.pokmontcgdeveloper.R
-import br.edu.jonathangs.pokmontcgdeveloper.database.Card
+import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.Card
 import com.squareup.picasso.Picasso
 
-internal class CardsAdapter(private val cards: List<Card>)
-    : RecyclerView.Adapter<CardsAdapter.SetViewHolder>() {
+internal class CardsAdapter: RecyclerView.Adapter<CardsAdapter.SetViewHolder>() {
+
+    private val cards = mutableListOf<Card>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
         val layout = LayoutInflater.from(parent.context)
@@ -24,6 +25,23 @@ internal class CardsAdapter(private val cards: List<Card>)
         holder: SetViewHolder,
         position: Int
     ) = holder.bind(card = cards[position])
+
+    fun setItems(cards: List<Card>) {
+        val previousSize = itemCount
+        clearItems()
+        this.cards.addAll(cards)
+        notifyItemRangeRemoved(0, previousSize)
+        notifyItemRangeInserted(0, itemCount)
+    }
+
+    private fun clearItems() {
+        this.cards.clear()
+    }
+
+    fun addItems(cards: List<Card>) {
+        this.cards.addAll(cards)
+        notifyItemInserted(itemCount)
+    }
 
     inner class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

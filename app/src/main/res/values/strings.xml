@@ -1,11 +1,25 @@
 <resources>
     <string name="app_name">Pokémon TCG Developer API</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sets">Sets</string>
     <string name="cards">Cards</string>
     <string name="symbol_image">symbol image</string>
     <string name="backdrop_image">backdrop image</string>
     <string name="minicard">Mini card</string>
+    <string name="search">Search</string>
+    <string name="grass">Grass</string>
+    <string name="psychic">Psychic</string>
+    <string name="metal">Metal</string>
+    <string name="fighting">Fighting</string>
+    <string name="fire">Fire</string>
+    <string name="water">Water</string>
+    <string name="dark">Dark</string>
+    <string name="normal">Normal</string>
+    <string name="subtypes">Subtypes</string>
+    <string name="supertypes">Supertypes</string>
+    <string name="types">Types</string>
+    <string name="network_error">Network error</string>
+    <string name="generic_error">Something went wrong</string>
+    <string name="no_types">No types</string>
+    <string name="no_data_found">No data found</string>
 </resources>
