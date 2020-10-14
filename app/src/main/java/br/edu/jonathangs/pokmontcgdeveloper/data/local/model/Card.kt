@@ -11,5 +11,7 @@ abstract class Card {
     abstract val series: String
     abstract val `set`: String
     abstract val setCode: String
-    abstract val types: List<String>
+    abstract val types: List<String>?
+    abstract val supertype: String?
+    abstract val subtype: String?
 }

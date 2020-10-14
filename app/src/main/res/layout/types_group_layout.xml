@@ -2,18 +2,46 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:minHeight="?attr/listPreferredItemHeight">
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/types"
+    <LinearLayout
+        android:id="@+id/options_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/listPreferredItemHeight"
-        android:padding="8dp"
-        android:orientation="horizontal"
-        tools:showIn="@layout/fragment_search"/>
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
 
-    <include android:id="@+id/loading_types"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/options_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            tools:text="@string/app_name" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/options_chipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Chip.Filter"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"/>
+
+    </LinearLayout>
+
+    <include android:id="@+id/options_loading"
         layout="@layout/layout_loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

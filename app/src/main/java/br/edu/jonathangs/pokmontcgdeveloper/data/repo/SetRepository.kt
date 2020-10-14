@@ -49,7 +49,9 @@ class SetRepository(
             series,
             set,
             setCode,
-            types
+            types,
+            supertype,
+            subtype
         )
 
 }

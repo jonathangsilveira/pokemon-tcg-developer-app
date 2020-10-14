@@ -74,8 +74,7 @@ class SetsFragment : Fragment(R.layout.fragment_sets) {
 
     private fun onClick(): (code: String, name: String) -> Unit = { setCode, name ->
         val bundle = SetFragment.newBundle(setCode, name)
-        //findNavController().navigate(R.id.action_home_to_set, bundle)
-        findNavController().navigate(R.id.action_home_to_search)
+        findNavController().navigate(R.id.action_home_to_set, bundle)
     }
 
     private fun showFailure(cause: Throwable) {

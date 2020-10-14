@@ -15,33 +15,76 @@ import java.util.*
 
 typealias Cards = List<Card>
 
+typealias Strings = List<String>
+
 class SearchRepository(
     private val webservice: CardsWebService,
     private val database: PokemonDatabase
 ) {
 
-    fun flowCards(types: List<String>, refresh: Boolean = false): Flow<LoadState<Cards>> = flow {
-        emit(LoadState.InProgress)
-        val type = types.joinToString { it.toLowerCase(Locale.ROOT) }
-        val loadFromLocal = !refresh || !fetchCards(type)
+    fun flowCards(
+        types: Strings,
+        supertypes: Strings,
+        subtypes: Strings,
+        refresh: Boolean = false
+    ): Flow<LoadState<Cards>> = flow {
+        emitProgress<Cards>()
+        val type = types.joinToString(separator = "|") { it.toLowerCase(Locale.ROOT) }
+        val supertype = supertypes.joinToString(separator = "|") { it.toLowerCase(Locale.ROOT) }
+        val subtype = subtypes.joinToString(separator = "|") { it.toLowerCase(Locale.ROOT) }
+        val loadFromLocal = !refresh || !fetchCards(
+            types = type,
+            supertypes = supertype,
+            subtypes = subtype
+        )
         if (loadFromLocal) {
             val localCards = database.setCardDao()
-                .flowCards(types = types.map { it.toLowerCase(Locale.ROOT) })
+                .flowCards(
+                    types = types,
+                    supertypes = supertypes,
+                    subtypes = subtypes
+                )
             emitSuccess(localCards)
         }
     }
 
-    val flowTypes: Flow<LoadState<List<String>>> = flow {
-        emit(LoadState.InProgress)
+    val flowTypes: Flow<LoadState<Strings>> = flow {
+        emitProgress<Strings>()
         when (val result = safeCall { webservice.types() }) {
             is Result.Success -> emitSuccess(result.data?.types)
             is Result.Failure -> emitException<List<String>>(result.throwable)
         }
     }
 
-    private suspend fun FlowCollector<LoadState<Cards>>.fetchCards(types: String): Boolean {
-        return when (val result =
-            safeCall { webservice.cards(parameters = mapOf("types" to types)) }) {
+    val flowSupertypes: Flow<LoadState<Strings>> = flow {
+        emitProgress<Strings>()
+        when (val result = safeCall { webservice.supertypes() }) {
+            is Result.Success -> emitSuccess(result.data?.supertypes)
+            is Result.Failure -> emitException<List<String>>(result.throwable)
+        }
+    }
+
+    val flowSubtypes: Flow<LoadState<Strings>> = flow {
+        emitProgress<Strings>()
+        when (val result = safeCall { webservice.subtypes() }) {
+            is Result.Success -> emitSuccess(result.data?.subtypes)
+            is Result.Failure -> emitException<List<String>>(result.throwable)
+        }
+    }
+
+    private suspend fun FlowCollector<LoadState<Cards>>.fetchCards(
+        types: String? = null,
+        supertypes: String? = null,
+        subtypes: String? = null
+    ): Boolean {
+        val parameters = mutableMapOf<String, String>()
+        if (!types.isNullOrEmpty())
+            parameters["types"] = types
+        if (!supertypes.isNullOrEmpty())
+            parameters["supertype"] = supertypes
+        if (!subtypes.isNullOrEmpty())
+            parameters["subtype"] = subtypes
+        return when (val result = safeCall { webservice.cards(parameters) }) {
             is Result.Success -> {
                 val cards = result.data?.cards?.map { it.toModel }
                 emitSuccess(cards)
@@ -66,7 +109,9 @@ class SearchRepository(
             series = series,
             set = set,
             setCode = setCode,
-            types = types
+            types = types,
+            supertype = supertype,
+            subtype = subtype
         )
 
 }

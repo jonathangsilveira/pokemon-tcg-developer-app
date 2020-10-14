@@ -1,6 +1,8 @@
 package br.edu.jonathangs.pokmontcgdeveloper.data.remote
 
 import br.edu.jonathangs.pokmontcgdeveloper.data.remote.data.CardsResponse
+import br.edu.jonathangs.pokmontcgdeveloper.data.remote.data.SubtypesResponse
+import br.edu.jonathangs.pokmontcgdeveloper.data.remote.data.SupertypesResponse
 import br.edu.jonathangs.pokmontcgdeveloper.data.remote.data.TypesResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -19,5 +21,11 @@ interface CardsWebService {
 
     @GET("types")
     suspend fun types(): Response<TypesResponse>
+
+    @GET("supertypes")
+    suspend fun supertypes(): Response<SupertypesResponse>
+
+    @GET("subtypes")
+    suspend fun subtypes(): Response<SubtypesResponse>
 
 }

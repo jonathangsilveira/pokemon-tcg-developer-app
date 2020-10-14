@@ -12,7 +12,7 @@ import br.edu.jonathangs.pokmontcgdeveloper.data.local.model.SetCard
 
 @Database(
     entities = [Set::class, SetCard::class],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
